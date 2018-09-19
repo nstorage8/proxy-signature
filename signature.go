@@ -51,20 +51,22 @@ func CheckIdentity(signature *Signature, xH, yH *big.Int) bool {
 	return xS.Cmp(xR) == 0 && yS.Cmp(yR) == 0
 }
 
-// Generates proxy signing key for private key of proxy signer d and given signature
-func GenerateSigningKey(d *big.Int, signature *Signature) (key *big.Int) {
+// Generates proxy signing key for proxi signer private key d and given signature
+func GenerateSigningKey(d *big.Int, signature *Signature) *big.Int {
+	key := new(big.Int)
 	key.Add(d, signature.S)
-	return
+	return key
 }
 
-// Returns message signed with proxy signing key l and proxy signed private key d
-func SignMessage(message []byte, l, d *big.Int) (signed *big.Int) {
+// Returns message signed with proxy signing key l and proxy signer private key d
+func SignMessage(message []byte, l, d *big.Int) *big.Int {
 	sum256 := new(big.Int)
 	bytes := sha256.Sum256(message)
 	sum256.SetBytes(bytes[:])
+	signed := new(big.Int)
 	signed.Mul(l, sum256)
 	signed.Add(signed, d)
-	return
+	return signed
 }
 
 // Checks signature validity of given message
